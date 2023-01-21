@@ -35,6 +35,7 @@ class SendOrderAttendeeTicketJob implements ShouldQueue
      */
     public function handle()
     {
+	return; //This blocks sending single ticket emails
         GenerateTicketJob::dispatchNow($this->attendee);
         $mail = new SendOrderAttendeeTicketMail($this->attendee);
         Mail::to($this->attendee->email)

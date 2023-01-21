@@ -28,7 +28,7 @@ return array (
   'export' => 'Exporteren',
   'general' => 'Algemeen',
   'hours' => 'uren',
-  // 'hello' => '',
+  'hello' => 'Hallo',
   'main_menu' => 'Hoofdmenu',
   'manage' => 'Beheren',
   'message' => 'Bericht',

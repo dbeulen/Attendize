@@ -157,14 +157,14 @@ class EventCheckoutController extends Controller
                 /*
                  * Create our validation rules here
                  */
-                $validation_rules['ticket_holder_first_name.' . $i . '.' . $ticket_id] = ['required'];
-                $validation_rules['ticket_holder_last_name.' . $i . '.' . $ticket_id] = ['required'];
-                $validation_rules['ticket_holder_email.' . $i . '.' . $ticket_id] = ['required', 'email'];
+               // $validation_rules['ticket_holder_first_name.' . $i . '.' . $ticket_id] = ['required'];
+               // $validation_rules['ticket_holder_last_name.' . $i . '.' . $ticket_id] = ['required'];
+               // $validation_rules['ticket_holder_email.' . $i . '.' . $ticket_id] = ['required', 'email'];
 
-                $validation_messages['ticket_holder_first_name.' . $i . '.' . $ticket_id . '.required'] = 'Ticket holder ' . ($i + 1) . '\'s first name is required';
-                $validation_messages['ticket_holder_last_name.' . $i . '.' . $ticket_id . '.required'] = 'Ticket holder ' . ($i + 1) . '\'s last name is required';
-                $validation_messages['ticket_holder_email.' . $i . '.' . $ticket_id . '.required'] = 'Ticket holder ' . ($i + 1) . '\'s email is required';
-                $validation_messages['ticket_holder_email.' . $i . '.' . $ticket_id . '.email'] = 'Ticket holder ' . ($i + 1) . '\'s email appears to be invalid';
+               // $validation_messages['ticket_holder_first_name.' . $i . '.' . $ticket_id . '.required'] = 'Ticket holder ' . ($i + 1) . '\'s first name is required';
+               // $validation_messages['ticket_holder_last_name.' . $i . '.' . $ticket_id . '.required'] = 'Ticket holder ' . ($i + 1) . '\'s last name is required';
+               // $validation_messages['ticket_holder_email.' . $i . '.' . $ticket_id . '.required'] = 'Ticket holder ' . ($i + 1) . '\'s email is required';
+                //$validation_messages['ticket_holder_email.' . $i . '.' . $ticket_id . '.email'] = 'Ticket holder ' . ($i + 1) . '\'s email appears to be invalid';
 
                 /*
                  * Validation rules for custom questions
@@ -186,6 +186,7 @@ class EventCheckoutController extends Controller
         }
 
         $activeAccountPaymentGateway = $event->account->getGateway($event->account->payment_gateway_id);
+
         //if no payment gateway configured and no offline pay, don't go to the next step and show user error
         if (empty($activeAccountPaymentGateway) && !$event->enable_offline_payments) {
             return response()->json([
@@ -218,7 +219,7 @@ class EventCheckoutController extends Controller
             'account_payment_gateway' => $activeAccountPaymentGateway,
             'payment_gateway'         => $paymentGateway
         ]);
-
+	Log::info("putted session order");
         /*
          * If we're this far assume everything is OK and redirect them
          * to the the checkout page.
@@ -249,7 +250,7 @@ class EventCheckoutController extends Controller
     public function showEventCheckout(Request $request, $event_id)
     {
         $order_session = session()->get('ticket_order_' . $event_id);
-
+	Log::info("found session in showEventCheckout");
         if (!$order_session || $order_session['expires'] < Carbon::now()) {
             $route_name = $this->is_embedded ? 'showEmbeddedEventPage' : 'showEventPage';
             return redirect()->route($route_name, ['event_id' => $event_id]);
@@ -289,6 +290,7 @@ class EventCheckoutController extends Controller
                 ])
             ]);
         }
+	Log::info("found session in postvalidateorder");
 
         $request_data = session()->get('ticket_order_' . $event_id . ".request_data");
         $request_data = (!empty($request_data[0])) ? array_merge($request_data[0], $request->all())
@@ -296,6 +298,7 @@ class EventCheckoutController extends Controller
 
         session()->remove('ticket_order_' . $event_id . '.request_data');
         session()->push('ticket_order_' . $event_id . '.request_data', $request_data);
+	Log::info("removed request_data in postvalidateorder");
 
         $event = Event::findOrFail($event_id);
         $order = new Order();
@@ -349,6 +352,8 @@ class EventCheckoutController extends Controller
     public function showEventPayment(Request $request, $event_id)
     {
         $order_session = session()->get('ticket_order_' . $event_id);
+	Log::info("found session in showEventPayment");
+
         $event = Event::findOrFail($event_id);
 
         $payment_gateway = $order_session['payment_gateway'];
@@ -494,29 +499,32 @@ class EventCheckoutController extends Controller
      */
     public function showEventCheckoutPaymentReturn(Request $request, $event_id)
     {
+	      Log::info("Return print request");
+        Log::info(json_encode($request));
+      //  Log::info("Event ID" + $event_id);
+        //dd($request);
 
         $ticket_order = session()->get('ticket_order_' . $event_id);
-
+		//dd(session()->getId());
         $payment_gateway_config = $ticket_order['account_payment_gateway']->config + [
                 'testMode' => config('attendize.enable_test_payments')];
 
         $payment_gateway_factory = new PaymentGatewayFactory();
         $gateway = $payment_gateway_factory->create($ticket_order['payment_gateway']->name, $payment_gateway_config);
+
         $gateway->extractRequestParameters($request);
         $response = $gateway->completeTransaction($ticket_order['transaction_data'][0]);
 
-
-        if ($response->isSuccessful()) {
+        if ($response->isPaid()) {
             session()->push('ticket_order_' . $event_id . '.transaction_id', $response->getTransactionReference());
             return $this->completeOrder($event_id, false);
         } else {
-            session()->flash('message', $response->getMessage());
+            //session()->flash('message', $response->getMessage());
             return response()->redirectToRoute('showEventPayment', [
                 'event_id'          => $event_id,
                 'is_payment_failed' => 1,
             ]);
         }
-
     }
 
     /**
@@ -652,9 +660,13 @@ class EventCheckoutController extends Controller
                 for ($i = 0; $i < $attendee_details['qty']; $i++) {
 
                     $attendee = new Attendee();
-                    $attendee->first_name = sanitise($request_data["ticket_holder_first_name"][$i][$attendee_details['ticket']['id']]);
-                    $attendee->last_name = sanitise($request_data["ticket_holder_last_name"][$i][$attendee_details['ticket']['id']]);
-                    $attendee->email = sanitise($request_data["ticket_holder_email"][$i][$attendee_details['ticket']['id']]);
+        	    $attendee->first_name = sanitise($request_data['order_first_name']);
+                    $attendee->last_name = sanitise($request_data['order_last_name']);
+                    $attendee->email = sanitise($request_data['order_email']);
+
+                    //$attendee->first_name = sanitise($request_data["ticket_holder_first_name"][$i][$attendee_details['ticket']['id']]);
+                   // $attendee->last_name = sanitise($request_data["ticket_holder_last_name"][$i][$attendee_details['ticket']['id']]);
+                   // $attendee->email = sanitise($request_data["ticket_holder_email"][$i][$attendee_details['ticket']['id']]);
                     $attendee->event_id = $event_id;
                     $attendee->order_id = $order->id;
                     $attendee->ticket_id = $attendee_details['ticket']['id'];

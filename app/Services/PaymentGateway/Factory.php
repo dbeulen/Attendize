@@ -3,6 +3,8 @@
 namespace Services\PaymentGateway;
 
 use Omnipay\Omnipay;
+use Log;
+
 
 /**
  * The intention of this factory is to create a service that is a wrapper around the relative Omnipay implementation
@@ -33,6 +35,14 @@ class Factory
                     $gateway->initialize();
 
                     return new Dummy($gateway, $paymentGatewayConfig);
+                }
+		case Mollie::GATEWAY_NAME :
+                {
+
+                    $gateway = Omnipay::create($name);
+                    $gateway->initialize();
+
+                    return new Mollie($gateway, $paymentGatewayConfig);
                 }
 
             case Stripe::GATEWAY_NAME :

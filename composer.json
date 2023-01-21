@@ -35,6 +35,7 @@
         "nitmedia/wkhtml2pdf": "dev-master",
         "omnipay/common": "^3.0",
         "omnipay/dummy": "^3.0",
+        "omnipay/mollie": "5.3",
         "omnipay/paypal": "^3.0",
         "omnipay/stripe": "^3.1",
         "php-http/curl-client": "^1.7",

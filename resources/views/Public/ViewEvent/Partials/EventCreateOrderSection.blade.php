@@ -88,7 +88,7 @@
                     </div>
                 </div>
                 <div class="row"><div class="col-md-12">&nbsp;</div></div>
-                <div class="row">
+                <div class="row" style="display:none;">
                     <div class="col-md-12">
                         <div class="form-group">
                             <div class="custom-checkbox">
@@ -154,12 +154,13 @@
                     </div>
                 </div>
                 <div class="row"><div class="col-md-12">&nbsp;</div></div>
+		@if(false)
                 <div class="p20 pl0">
                     <a href="javascript:void(0);" class="btn btn-primary btn-xs" id="mirror_buyer_info">
                         @lang("Public_ViewEvent.copy_buyer")
                     </a>
                 </div>
-
+		
                 <div class="row">
                     <div class="col-md-12">
                         <div class="ticket_holders_details" >
@@ -208,6 +209,7 @@
                         </div>
                     </div>
                 </div>
+		@endif
 
                 @if($event->pre_order_display_message)
                 <div class="well well-small">

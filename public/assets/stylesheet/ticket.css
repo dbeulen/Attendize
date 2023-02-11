@@ -3,16 +3,16 @@
     /*page-break-after: always;*/
     padding: 10px;
     border: 1px solid #000;
-    width: 700px;
+    width: 1800px;
     margin: 0 auto;
     margin-top: 20px;
     background: #000;
     position: relative;
-    height: 330px;
+    height: 430px;
     font-family: Verdana !important;
     font-weight: bold;
     font-size: 12px;
-    color: #999;
+    color: #FFF;
     border-left-width: 3px;
     border-left-color: #000;
     overflow: hidden;
@@ -36,16 +36,16 @@
 }
 
 .ticket .barcode {
-    width: 180px;
-    height: 180px;
+    width: 192px;
+    height: 192px;
     position: absolute;
-    left:520px;
-    top:0px;
+    left:1110px;
+    top:40px;
     overflow: hidden;
     padding: 10px;
     border: 1px solid #000;
     border-left: none;
-    background-color: #fdfdfd;
+    background-color: rgba(255, 255, 255, .8);
 }
 
 .ticket   .barcode_vertical {
@@ -70,17 +70,15 @@
     font-size: 17px;
     margin: 6px auto;
     text-transform: uppercase;
-    color: #999;
+    color: #FFF;
 
 }
 
 .ticket .layout_even {
     position:absolute;
     height:230px;
-    left: 515px;
-    width: 200px;
-background-color:white;
- }
+    left: 1100px;
+    width: 210px; }
 
 .ticket .event_details, .ticket .attendee_details {
     position: absolute;
@@ -99,12 +97,12 @@ background-color:white;
 }
 
 .ticket .attendee_details {
-    top: 180px;
+    top: 280px;
     line-height: 1.1;
     font-size:12;
     left: 15px;
     overflow: hidden;
-    max-width: 150px;
+    max-width: 200px;
     text-overflow: ellipsis;
 }
 

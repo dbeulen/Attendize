@@ -61,12 +61,12 @@ page-break-inside:avoid;
         <div class="container">
             @foreach($attendees as $attendee)
                 @if(!$attendee->is_cancelled)
-                    <div class="ticket">
+                    <div class="ticket" style="background-image:url('https://tickets.plankenkoortsfestival.nl/assets/images/ticket-background-{{$attendee->ticket->id}}.png')">
 
                         <div class="layout_even">
-                        <div class="attendee_details">
-                                                                                            
+                        <div class="attendee_details">                                    
                             <p>{{$attendee->first_name.' '.$attendee->last_name}} <br>
+				{{$attendee->ticket->title}} <br>
 
                                								@php
 	                            	// Calculating grand total including tax

@@ -19,8 +19,8 @@ class Mollie
     public function __construct($gateway)
     {
         $this->gateway = $gateway;
-	//$this->gateway->setApiKey('test_cezE5seq2eexSTgRbNhhRJgdpEMMVw');
-	$this->gateway->setApiKey('live_4wC72V5eJM9PjrubrcpwPNrtGRfCkE');
+	$this->gateway->setApiKey('test_cezE5seq2eexSTgRbNhhRJgdpEMMVw');
+	//$this->gateway->setApiKey('live_4wC72V5eJM9PjrubrcpwPNrtGRfCkE');
         $this->options = [];
     }
  
